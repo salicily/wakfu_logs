@@ -12,7 +12,9 @@ build/$(1).o:
 
 endef
 
-SOURCES := rbt characters ringbuf entry_parser log_engine interfaces interfaces/dummy interfaces/basic wlog
+INTERFACES := dummy basic simple_colors
+
+SOURCES := rbt characters ringbuf entry_parser log_engine interfaces wlog $(addprefix interfaces/,$(INTERFACES))
 
 wlog: $(addprefix build/,$(addsuffix .o, $(SOURCES)))
 	gcc -Wall -o wlog $(^)
