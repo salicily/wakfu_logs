@@ -113,8 +113,9 @@ int entry_parser(struct characters *chars, const char *text, size_t text_size, s
 	uint32_t hour = (text[0] - '0') * 10 + (text[1] - '0');
 	uint32_t min = (text[3] - '0') * 10 + (text[4] - '0');
 	uint32_t sec = (text[6] - '0') * 10 + (text[7] - '0');
-	uint32_t milli = (text[9] - '0') * 100 + (text[10] - '0') * 10 + (text[11] - '0');
-	entry->time = ((hour * 60 + min) * 60 + sec) * 1000 + milli;
+	/* We drop the milliseconds, let us be honest, we do not need them, and we use only 18 bits for time */
+	/* uint32_t milli = (text[9] - '0') * 100 + (text[10] - '0') * 10 + (text[11] - '0'); */
+	entry->time = ((hour * 60 + min) * 60 + sec) /* * 1000 + milli */;
 	text += 15;
 	text_size -= 15;
 	enum chan_id cid = 0;

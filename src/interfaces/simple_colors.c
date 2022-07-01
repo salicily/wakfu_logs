@@ -58,7 +58,7 @@ static int simple_colors_refresh(struct iface_state *state, struct logs *logs) {
 			static char buf[512];
 			logs_get_text(logs, e.text.offset, e.text.size, buf);
 			logs_name_source(logs, e.src, name, sizeof(name));
-			unsigned int aux = e.time / 1000;
+			unsigned int aux = e.time;
 			unsigned int s = aux % 60;
 			aux /= 60;
 			unsigned int m = aux % 60;
