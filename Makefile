@@ -12,7 +12,7 @@ build/$(1).o:
 
 endef
 
-INTERFACES := dummy basic simple_colors
+INTERFACES := dummy basic simple_colors inout
 
 SOURCES := rbt characters ringbuf entry_parser log_engine interfaces wlog $(addprefix interfaces/,$(INTERFACES))
 

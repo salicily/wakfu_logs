@@ -1,4 +1,4 @@
-#include "simple_colors.h"
+#include "inout.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -6,7 +6,7 @@ struct iface_state {
 	size_t next_entry;
 };
 
-static struct iface_state *simple_colors_init(void) {
+static struct iface_state *inout_init(void) {
 	struct iface_state *st = malloc(sizeof(*st));
 	if (st != NULL) {
 		st->next_entry = 0;
@@ -17,14 +17,14 @@ static struct iface_state *simple_colors_init(void) {
 static const char *chan_mod(enum chan_id ci) {
 	switch (ci) {
 		case chan_commerce:    return NULL;
-		case chan_guilde:      return "";        //normal
-		case chan_proximite:   return "";        //normal
+		case chan_guilde:      return NULL;
+		case chan_proximite:   return NULL;
 		case chan_recrutement: return NULL;
-		case chan_prive_from:  return "\x1b[4m"; //underlined
-		case chan_prive_to:    return "\x1b[1m"; //bold
-		case chan_group:       return "\x1b[3m"; //inverse
-		case chan_in:          return NULL;
-		case chan_out:         return NULL;
+		case chan_prive_from:  return NULL;
+		case chan_prive_to:    return NULL;
+		case chan_group:       return NULL;
+		case chan_in:          return "\x1b[1m"; //bold
+		case chan_out:         return "\x1b[2m"; //thin
 		default:               return NULL;
 	}
 }
@@ -48,7 +48,7 @@ static const char *color(unsigned int index) {
 	return colors[index % mod];
 }
 
-static int simple_colors_refresh(struct iface_state *state, struct logs *logs) {
+static int inout_refresh(struct iface_state *state, struct logs *logs) {
 	struct entry e;
 	size_t ne = logs_get_next_entry(logs);
 	while (state->next_entry < ne) {
@@ -70,15 +70,15 @@ static int simple_colors_refresh(struct iface_state *state, struct logs *logs) {
 	return 1;
 }
 
-static void simple_colors_release(struct iface_state *state) {
+static void inout_release(struct iface_state *state) {
 	free(state);
 	return;
 }
 
-struct interface simple_colors = {
-	.name = "simple_colors",
-	.init = simple_colors_init,
-	.refresh = simple_colors_refresh,
-	.release = simple_colors_release,
+struct interface inout = {
+	.name = "inout",
+	.init = inout_init,
+	.refresh = inout_refresh,
+	.release = inout_release,
 };
 

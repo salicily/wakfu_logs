@@ -8,13 +8,15 @@ struct channel {
 };
 
 static const struct channel channels[] = {
-	[chan_commerce   ] = { .prefix = "[Commerce] "    , .infix = " : "  , },
-	[chan_guilde     ] = { .prefix = "[Guilde] "      , .infix = " : "  , },
-	[chan_proximite  ] = { .prefix = "[Proximité] "   , .infix = " : "  , },
-	[chan_recrutement] = { .prefix = "[Recrutement] " , .infix = " : "  , },
-	[chan_prive_from ] = { .prefix = "[Privé] FROM \"", .infix = "\" : ", },
-	[chan_prive_to   ] = { .prefix = "[Privé] TO \""  , .infix = "\" : ", },
-	[chan_group      ] = { .prefix = "[Groupe] "      , .infix = " : "  , },
+	[chan_commerce   ] = { .prefix = "[Commerce] "         , .infix = " : "  , },
+	[chan_guilde     ] = { .prefix = "[Guilde] "           , .infix = " : "  , },
+	[chan_proximite  ] = { .prefix = "[Proximité] "        , .infix = " : "  , },
+	[chan_recrutement] = { .prefix = "[Recrutement] "      , .infix = " : "  , },
+	[chan_prive_from ] = { .prefix = "[Privé] FROM \""     , .infix = "\" : ", },
+	[chan_prive_to   ] = { .prefix = "[Privé] TO \""       , .infix = "\" : ", },
+	[chan_group      ] = { .prefix = "[Groupe] "           , .infix = " : "  , },
+	[chan_in         ] = { .prefix = "[Information (jeu)] ", .infix = " ("   , },
+	[chan_out        ] = { .prefix = "[Information (jeu)] ", .infix = " ("   , },
 };
 
 static int skip_prefix(const char *prefix, const char *text, size_t text_size, size_t *offset) {
@@ -62,6 +64,24 @@ static int parse_channel(struct characters *chars, enum chan_id cid, struct entr
 	r = find_infix(channels[cid].infix, text, text_size, &offset, &e->text);
 	if (r != 0) {
 		return -1;
+	}
+	if (cid == chan_in) {
+		size_t suboff = offset;
+		struct string sub;
+		r = find_infix(") a rejoint notre monde", text, text_size, &suboff, &sub);
+		if (r != 0) {
+			return -1;
+		}
+		text_size = sub.offset + sub.size;
+	}
+	if (cid == chan_out) {
+		size_t suboff = offset;
+		struct string sub;
+		r = find_infix(") vient de quitter notre monde", text, text_size, &suboff, &sub);
+		if (r != 0) {
+			return -1;
+		}
+		text_size = sub.offset + sub.size;
 	}
 	size_t hash;
 	char name[64];

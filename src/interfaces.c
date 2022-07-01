@@ -2,11 +2,13 @@
 #include "interfaces/dummy.h"
 #include "interfaces/basic.h"
 #include "interfaces/simple_colors.h"
+#include "interfaces/inout.h"
 
 static struct interface *interfaces[] = {
 	&dummy,
 	&basic,
 	&simple_colors,
+	&inout,
 };
 
 #define MAX_IFACES (sizeof(interfaces)/sizeof(interfaces[0]))
