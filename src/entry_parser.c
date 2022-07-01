@@ -14,6 +14,7 @@ static const struct channel channels[] = {
 	[chan_recrutement] = { .prefix = "[Recrutement] " , .infix = " : "  , },
 	[chan_prive_from ] = { .prefix = "[Privé] FROM \"", .infix = "\" : ", },
 	[chan_prive_to   ] = { .prefix = "[Privé] TO \""  , .infix = "\" : ", },
+	[chan_group      ] = { .prefix = "[Groupe] "      , .infix = " : "  , },
 };
 
 static int skip_prefix(const char *prefix, const char *text, size_t text_size, size_t *offset) {

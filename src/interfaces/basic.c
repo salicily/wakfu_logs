@@ -23,6 +23,7 @@ static const char *chan(enum chan_id ci) {
 		case chan_recrutement: return "recrutement";
 		case chan_prive_from:  return "prive_from";
 		case chan_prive_to:    return "prive_to";
+		case chan_group:       return "group";
 		default:               return "invalid";
 	}
 }

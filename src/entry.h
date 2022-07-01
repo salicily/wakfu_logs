@@ -8,6 +8,7 @@ enum chan_id {
 	chan_recrutement,
 	chan_prive_from,
 	chan_prive_to,
+	chan_group,
 	chan_invalid,
 };
 
