@@ -12,7 +12,9 @@ build/$(1).o:
 
 endef
 
-INTERFACES := dummy basic simple_colors inout
+TERM := backend command logview config window_print raw_mode debug
+
+INTERFACES := dummy basic simple_colors inout $(addprefix term/,$(TERM))
 
 SOURCES := rbt characters ringbuf entry_parser log_engine interfaces wlog $(addprefix interfaces/,$(INTERFACES))
 

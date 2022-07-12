@@ -98,19 +98,15 @@ int main(int argc, char **argv) {
 	int cont = siface.refresh(istate, lgs);
 	while (cont == 1) {
 		int r = logs_refresh(lgs);
-		switch (r) {
-			case 0:
-				cont = siface.refresh(istate, lgs);
-				break;
-			case 1:
-				cont = siface.refresh(istate, lgs);
-				sleep(1);
-				break;
-			default:
-				dprintf(2, "Could not refresh logs\n");
-				cont = 0;
+		while (r == 0) {
+			r = logs_refresh(lgs);
 		}
-		if (r != 0) {
+		if (r == 1) {
+			cont = siface.refresh(istate, lgs);
+			sleep(1);
+		} else {
+			dprintf(2, "Could not refresh logs\n");
+			cont = 0;
 		}
 	}
 	siface.release(istate);
