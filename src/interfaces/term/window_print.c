@@ -157,7 +157,7 @@ void clear_lines(size_t line, size_t col, size_t width, size_t height) {
 		}
 		write_ostream(header, w);
 		for (size_t i = 0; i < width; ++i) {
-			write_ostream("*", 1);
+			write_ostream(" ", 1);
 		}
 		--height;
 		++line;
