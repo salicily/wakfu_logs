@@ -63,6 +63,7 @@ void flush_ostream(void) {
  * If 2 is returned, *text is updated for the next line, and *text_size also.
  */
 static int get_text_line(size_t width, const char **text, size_t *text_size, size_t *columns, _Bool force) {
+	const char *saved_text = *text;
 	size_t saved_text_size = *text_size;
 	size_t saved_columns = 0;
 	size_t tot = 0;
@@ -81,20 +82,21 @@ static int get_text_line(size_t width, const char **text, size_t *text_size, siz
 			return -1;
 		}
 		tot += 1;
-		*text += l;
-		*text_size -= l;
 		if (tot > width) {
 			if (columns != NULL) {
 				*columns = saved_columns;
 			}
-			*text -= (saved_text_size - *text_size);
+			*text = saved_text;
 			*text_size = saved_text_size;
 			return 2;
 		}
 		if (force || ((l == 1) && (**text == ' '))) {
-			saved_text_size = *text_size;
-			saved_columns = tot - 1;
+			saved_text = *text + 1;
+			saved_text_size = *text_size - 1;
+			saved_columns = tot;
 		}
+		*text += l;
+		*text_size -= l;
 	}
 	if (columns != NULL) {
 		*columns = tot;
@@ -119,7 +121,7 @@ ssize_t text_lines(size_t line, size_t col, size_t width, const char *text, size
 		const char *old = text;
 		r = get_text_line(width, &text, &text_size, &cols, force);
 		if ((r >= 0) && (cols > 0) && print) {
-			int w = sprintf(header, "\x1b[%zu;%zuH", line, col);
+			int w = sprintf(header, "\x1b[%zu;%zuH", line + lines, col);
 			if (w < 0) {
 				return -1;
 			}
