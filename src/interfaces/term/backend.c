@@ -129,12 +129,12 @@ static int term_refresh(struct iface_state *state, struct logs *logs) {
 	if (rd < 0) {
 		return -1;
 	}
-	refresh_inputs(state->cfg, logs, 2, state->width - 2, state->height - 2, 2, buffer, rd, resized, &state->focused_entry, &quit, &lv_needs_refresh);
+	refresh_inputs(state->cfg, logs, 1, state->width, state->height - 1, 2, buffer, rd, resized, &state->focused_entry, &quit, &lv_needs_refresh);
 	if (quit) {
 		return 0;
 	}
 	if (lv_needs_refresh) {
-		(void)log_view(state->cfg, logs, 2, state->width - 2, 2, state->height - 5, state->focused_entry);
+		(void)log_view(state->cfg, logs, 1, state->width, 1, state->height - 2, &state->focused_entry);
 	}
 	flush_ostream();
 	return 1;

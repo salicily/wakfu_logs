@@ -71,14 +71,14 @@ static void dbg_style(int i) {
 	return;
 }
 
-int log_view(struct config *cfg, struct logs *lgs, size_t scol, size_t cols, size_t sline, size_t lines, size_t entry) {
+int log_view(struct config *cfg, struct logs *lgs, size_t scol, size_t cols, size_t sline, size_t lines, size_t *entry_) {
 debug("START\n");
 	size_t time_size = 0;
 	size_t name_size = 32;
 	if (cfg->show_time) {
 		time_size = 8;
 	}
-	size_t marge = time_size + name_size + 1;
+	size_t marge = time_size + name_size;
 	if (marge >= cols) {
 		return -1;
 	}
@@ -86,6 +86,7 @@ debug("START\n");
 	size_t first_line = sline + lines;
 	size_t next_entry = logs_get_next_entry(lgs);
 	size_t used_entries = logs_get_used_entries(lgs);
+	size_t entry = *entry_;
 debug("  entry: %zu\n", entry);
 debug("  first_line: %zu\n", first_line);
 debug("  text_width: %zu\n", text_width);
@@ -93,14 +94,14 @@ debug("  next_entry: %zu\n", next_entry);
 debug("  used_entries: %zu\n", used_entries);
 	if (entry > next_entry) {
 		entry = next_entry;
-debug("  entry: %zu\n", entry);
 	}
+	size_t first_entry = next_entry - used_entries;
+	if (first_entry > entry) {
+		entry = first_entry;
+	}
+	*entry_ = entry;
 	size_t gap = next_entry - entry;
-	if (gap >= used_entries) {
-		used_entries = 0;
-	} else {
-		used_entries -= gap;
-	}
+	used_entries -= gap;
 debug("  used_entries: %zu\n", used_entries);
 	while (used_entries > 0) {
 		--entry;
@@ -129,7 +130,7 @@ debug("  skipped: invalid channel\n");
 debug("  skipped: hide\n");
 			continue;
 		}
-		static char name[64];
+		static char name[67];
 		r = logs_name_source(lgs, e.src, name, sizeof(name));
 		if (r != 0) {
 			return -1;
@@ -142,7 +143,7 @@ debug("  ts: %zu\n", ts);
 		}
 		ssize_t tl = text_lines(first_line, scol + marge, text_width, text, ts, 0, 0);
 debug("  tl: %zd\n", tl);
-		if (tl < 0) {
+		if (tl <= 0) {
 			return -1;
 		}
 		if ((sline + tl) > first_line) {
@@ -157,7 +158,14 @@ debug("  first_line: %zu\n", first_line);
 dbg_style(0);
 		text_lines(first_line, scol + marge, text_width, text, ts, 1, 0);
 dbg_style(1);
-		text_lines(first_line, scol + time_size, name_size, name, strlen(name), 1, 1);
+		size_t nlen = strlen(name);
+		if ((nlen + 3) <= sizeof(name)) {
+			name[nlen] = ' ';
+			name[nlen+1] = ':';
+			name[nlen+2] = ' ';
+			nlen += 3;
+		}
+		text_lines(first_line, scol + time_size, name_size, name, nlen, 1, 1);
 		if (time_size > 0) {
 			char time[10];
 			unsigned int seconds = e.time % 60;
