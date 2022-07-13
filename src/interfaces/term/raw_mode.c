@@ -29,7 +29,7 @@ int enter_raw_mode(void) {
 	copy.c_cflag |=  (CS8);
 	copy.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
 	copy.c_cc[VMIN] = 0;
-	copy.c_cc[VTIME] = 0;
+	copy.c_cc[VTIME] = 10;
 	r = tcsetattr(1, TCSAFLUSH, &copy);
 	if (r != 0) {
 		return r;
