@@ -1,6 +1,7 @@
 #include "../term.h"
 #include "command.h"
 #include "config.h"
+#include "debug.h"
 #include "logview.h"
 #include "raw_mode.h"
 #include "window_print.h"
@@ -28,6 +29,23 @@ static void term_resize_handler(int signo, siginfo_t *info, void *context) {
 	return;
 }
 
+/* WSL specific workaround as read does not honnor VTIME on WSL */
+static ssize_t tout_read(int fd, char *buffer, size_t buffer_size, unsigned long timeout) {
+	fd_set set;
+	FD_ZERO(&set);
+	FD_SET(fd, &set);
+	struct timeval tout;
+	tout.tv_sec = timeout / 1000000;
+	tout.tv_usec = timeout % 1000000;
+	int r = select(fd + 1, &set, NULL, NULL, &tout);
+	if (r == -1) {
+		return -1;
+	}
+	if (r == 0) {
+		return 0;
+	}
+	return read(fd, buffer, buffer_size);
+}
 
 struct iface_state {
 	struct config *cfg;
@@ -100,6 +118,13 @@ static int term_refresh(struct iface_state *state, struct logs *logs) {
 	_Bool quit = 0;
 	_Bool resized = 0;
 	_Bool lv_needs_refresh;
+	ssize_t rd = tout_read(0, buffer, sizeof(buffer), 1000000);
+	if (rd < 0) {
+		if (errno != EINTR) {
+			return -1;
+		}
+		rd = 0;
+	}
 	// siginfo_t inf;
 	while (lb == la) {
 		la = !la;
@@ -124,10 +149,6 @@ static int term_refresh(struct iface_state *state, struct logs *logs) {
 	if (state->height < 10) {
 		printf("Terminal window is too small\r\n");
 		return 1;
-	}
-	ssize_t rd = read(0, buffer, sizeof(buffer));
-	if (rd < 0) {
-		return -1;
 	}
 	refresh_inputs(state->cfg, logs, 1, state->width, state->height - 1, 2, buffer, rd, resized, &state->focused_entry, &quit, &lv_needs_refresh);
 	if (quit) {
