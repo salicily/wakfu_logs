@@ -12,7 +12,7 @@ build/$(1).o:
 
 endef
 
-TERM := backend command logview config window_print raw_mode debug
+TERM := backend command logview config window_print raw_mode debug key
 
 INTERFACES := dummy basic simple_colors inout $(addprefix term/,$(TERM))
 
