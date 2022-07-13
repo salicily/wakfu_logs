@@ -103,7 +103,6 @@ int main(int argc, char **argv) {
 		}
 		if (r == 1) {
 			cont = siface.refresh(istate, lgs);
-			sleep(1);
 		} else {
 			dprintf(2, "Could not refresh logs\n");
 			cont = 0;

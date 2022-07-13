@@ -1,4 +1,5 @@
 #include "dummy.h"
+#include <unistd.h>
 
 struct iface_state {
 	size_t dummy;
@@ -12,6 +13,7 @@ static struct iface_state *dummy_init(void) {
 
 static int dummy_refresh(struct iface_state *state, struct logs *logs) {
 	(void)logs;
+	sleep(1);
 	return 1;
 }
 

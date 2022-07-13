@@ -1,6 +1,7 @@
 #include "basic.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 struct iface_state {
 	size_t next_entry;
@@ -50,6 +51,7 @@ static int basic_refresh(struct iface_state *state, struct logs *logs) {
 		}
 		++state->next_entry;
 	}
+	sleep(1);
 	return 1;
 }
 
